@@ -1,0 +1,63 @@
+---
+title: 'E-Commerce Platform'
+publishedAt: '2024-01-15'
+summary: 'A full-stack e-commerce platform built with Next.js and Stripe integration'
+image: '/images/ecommerce-project.jpg'
+techStack:
+  ['Next.js', 'TypeScript', 'Tailwind CSS', 'Stripe', 'PostgreSQL', 'Prisma']
+liveUrl: 'https://my-ecommerce-demo.vercel.app'
+githubUrl: 'https://github.com/username/ecommerce-platform'
+---
+
+# E-Commerce Platform
+
+This is a modern e-commerce platform built with cutting-edge technologies to provide a seamless shopping experience.
+
+## Features
+
+- **User Authentication**: Secure user registration and login
+- **Product Catalog**: Browse and search through products
+- **Shopping Cart**: Add, remove, and manage cart items
+- **Payment Processing**: Secure payments with Stripe
+- **Order Management**: Track orders and order history
+- **Admin Dashboard**: Manage products, orders, and users
+
+## Key Highlights
+
+### Performance
+
+The platform is optimized for speed with Next.js 14 App Router, delivering lightning-fast page loads and smooth navigation.
+
+### Security
+
+Implemented secure authentication with NextAuth.js and encrypted payment processing with Stripe.
+
+### Responsive Design
+
+Fully responsive design that works seamlessly across all devices, from mobile phones to desktop computers.
+
+## Technical Implementation
+
+The backend uses PostgreSQL with Prisma as the ORM for efficient data management. The frontend leverages React Server Components for optimal performance and SEO.
+
+```typescript
+// Example API route for products
+export async function GET() {
+  const products = await prisma.product.findMany({
+    include: {
+      category: true,
+      images: true,
+    },
+  })
+
+  return Response.json(products)
+}
+```
+
+## Challenges Overcome
+
+- Implemented complex cart state management across server and client components
+- Optimized database queries for large product catalogs
+- Built a robust order processing system with inventory management
+
+This project demonstrates proficiency in full-stack development, payment integration, and modern web technologies.

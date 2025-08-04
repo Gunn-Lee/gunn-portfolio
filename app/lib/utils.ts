@@ -8,34 +8,69 @@ type Metadata = {
   image?: string
 }
 
+type ProjectMetadata = {
+  title: string
+  publishedAt: string
+  summary: string
+  image?: string
+  techStack?: string[]
+  liveUrl?: string
+  githubUrl?: string
+}
+
 function parseFrontmatter(fileContent: string) {
   let frontmatterRegex = /---\s*([\s\S]*?)\s*---/
   let match = frontmatterRegex.exec(fileContent)
   let frontMatterBlock = match![1]
   let content = fileContent.replace(frontmatterRegex, '').trim()
   let frontMatterLines = frontMatterBlock.trim().split('\n')
-  let metadata: Partial<Metadata> = {}
+  let metadata: Partial<Metadata | ProjectMetadata> = {}
 
-  frontMatterLines.forEach((line) => {
+  let i = 0
+  while (i < frontMatterLines.length) {
+    const line = frontMatterLines[i]
     let [key, ...valueArr] = line.split(': ')
-    let value = valueArr.join(': ').trim()
-    value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
-    metadata[key.trim() as keyof Metadata] = value
-  })
+    let value: any = valueArr.join(': ').trim()
 
-  return { metadata: metadata as Metadata, content }
+    // Handle YAML-style arrays
+    if (
+      value === '' &&
+      i + 1 < frontMatterLines.length &&
+      frontMatterLines[i + 1].trim().startsWith('[')
+    ) {
+      // Multi-line array format
+      i++
+      value = frontMatterLines[i].trim()
+    }
+
+    // Remove quotes
+    value = value.replace(/^['"](.*)['"]$/, '$1')
+
+    // Handle arrays (like techStack)
+    if (value.startsWith('[') && value.endsWith(']')) {
+      value = value
+        .slice(1, -1)
+        .split(',')
+        .map((item: string) => item.trim().replace(/^['"](.*)['"]$/, '$1'))
+    }
+
+    metadata[key.trim() as keyof (Metadata | ProjectMetadata)] = value
+    i++
+  }
+
+  return { metadata, content }
 }
 
-function getMDXFiles(dir) {
+function getMDXFiles(dir: string) {
   return fs.readdirSync(dir).filter((file) => path.extname(file) === '.mdx')
 }
 
-function readMDXFile(filePath) {
+function readMDXFile(filePath: string) {
   let rawContent = fs.readFileSync(filePath, 'utf-8')
   return parseFrontmatter(rawContent)
 }
 
-function getMDXData(dir) {
+function getMDXData(dir: string) {
   let mdxFiles = getMDXFiles(dir)
   return mdxFiles.map((file) => {
     let { metadata, content } = readMDXFile(path.join(dir, file))
@@ -51,6 +86,10 @@ function getMDXData(dir) {
 
 export function getBlogPosts() {
   return getMDXData(path.join(process.cwd(), 'app', 'blog', 'posts'))
+}
+
+export function getProjects() {
+  return getMDXData(path.join(process.cwd(), 'app', 'projects', 'posts'))
 }
 
 export function formatDate(date: string, includeRelative = false) {

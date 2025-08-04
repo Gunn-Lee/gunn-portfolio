@@ -1,0 +1,83 @@
+---
+title: 'Weather Dashboard'
+publishedAt: '2024-03-10'
+summary: 'A responsive weather dashboard with location-based forecasts and interactive maps'
+image: '/images/weather-dashboard.jpg'
+techStack: ['Vue.js', 'D3.js', 'OpenWeather API', 'Mapbox', 'Vuex', 'Sass']
+liveUrl: 'https://weather-insights.vercel.app'
+githubUrl: 'https://github.com/username/weather-dashboard'
+---
+
+# Weather Dashboard
+
+An interactive weather dashboard that provides comprehensive weather information with beautiful visualizations and location-based forecasts.
+
+## Features Overview
+
+- **Current Weather**: Real-time weather conditions for any location
+- **7-Day Forecast**: Detailed week-ahead weather predictions
+- **Interactive Maps**: Weather overlay maps with radar and satellite imagery
+- **Location Search**: Search weather by city name or coordinates
+- **Favorites**: Save frequently checked locations
+- **Data Visualization**: Charts and graphs for temperature, humidity, and precipitation trends
+
+## Technology Highlights
+
+### Frontend Framework
+
+Built with Vue.js 3 for reactive user interface with composition API for better code organization and reusability.
+
+### Data Visualization
+
+Leveraged D3.js to create interactive charts showing weather trends, temperature variations, and precipitation patterns.
+
+### Mapping Integration
+
+Integrated Mapbox for interactive weather maps with custom overlays for radar and satellite imagery.
+
+## API Integration
+
+```javascript
+// Weather API service
+export const weatherService = {
+  async getCurrentWeather(lat, lon) {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+    )
+    return response.json()
+  },
+
+  async getForecast(lat, lon) {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+    )
+    return response.json()
+  },
+}
+```
+
+## Design Philosophy
+
+### Responsive Design
+
+The dashboard adapts seamlessly to different screen sizes, providing optimal viewing experience on mobile, tablet, and desktop devices.
+
+### Performance Optimization
+
+- Implemented caching strategies for API responses
+- Lazy loading for map components
+- Debounced search functionality to minimize API calls
+
+### User Experience
+
+- Intuitive navigation between different weather views
+- Smooth animations and transitions
+- Accessible design following WCAG guidelines
+
+## Technical Challenges
+
+1. **API Rate Limiting**: Implemented smart caching to minimize API calls while keeping data fresh
+2. **Map Performance**: Optimized map rendering for smooth interaction with weather overlays
+3. **Data Accuracy**: Handled API errors gracefully and provided fallback data sources
+
+This project demonstrates expertise in modern frontend frameworks, API integration, data visualization, and creating polished user experiences.

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { CustomMDX } from 'app/components/mdx'
-import { formatDate, getBlogPosts } from 'app/blog/utils'
+import { formatDate, getBlogPosts } from 'app/lib/utils'
 import { baseUrl } from 'app/sitemap'
 
 export async function generateStaticParams() {
@@ -11,8 +11,9 @@ export async function generateStaticParams() {
   }))
 }
 
-export function generateMetadata({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug)
+export async function generateMetadata({ params }) {
+  const resolvedParams = await params
+  let post = getBlogPosts().find((post) => post.slug === resolvedParams.slug)
   if (!post) {
     return
   }
@@ -25,7 +26,7 @@ export function generateMetadata({ params }) {
   } = post.metadata
   let ogImage = image
     ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`
+    : `${baseUrl}/og?title=${encodeURIComponent(title || 'Blog Post')}`
 
   return {
     title,
@@ -51,8 +52,9 @@ export function generateMetadata({ params }) {
   }
 }
 
-export default function Blog({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug)
+export default async function Blog({ params }) {
+  const resolvedParams = await params
+  let post = getBlogPosts().find((post) => post.slug === resolvedParams.slug)
 
   if (!post) {
     notFound()
@@ -61,7 +63,7 @@ export default function Blog({ params }) {
   return (
     <section>
       <script
-        type="application/ld+json"
+        type='application/ld+json'
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -73,7 +75,9 @@ export default function Blog({ params }) {
             description: post.metadata.summary,
             image: post.metadata.image
               ? `${baseUrl}${post.metadata.image}`
-              : `/og?title=${encodeURIComponent(post.metadata.title)}`,
+              : `/og?title=${encodeURIComponent(
+                  post.metadata.title || 'Blog Post'
+                )}`,
             url: `${baseUrl}/blog/${post.slug}`,
             author: {
               '@type': 'Person',
@@ -82,15 +86,17 @@ export default function Blog({ params }) {
           }),
         }}
       />
-      <h1 className="title font-semibold text-2xl tracking-tighter">
+      <h1 className='title font-semibold text-2xl tracking-tighter'>
         {post.metadata.title}
       </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {formatDate(post.metadata.publishedAt)}
+      <div className='flex justify-between items-center mt-2 mb-8 text-sm'>
+        <p className='text-sm text-neutral-600 dark:text-neutral-400'>
+          {post.metadata.publishedAt
+            ? formatDate(post.metadata.publishedAt)
+            : ''}
         </p>
       </div>
-      <article className="prose">
+      <article className='prose'>
         <CustomMDX source={post.content} />
       </article>
     </section>
